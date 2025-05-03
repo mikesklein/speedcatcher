@@ -1,0 +1,11 @@
+# Ignore screenshots directory
+screenshots/
+
+# Ignore all CSV files
+*.csv
+
+# Ignore all video files with .mov extension
+*.mov
+
+# Ignore model files with .pt extension
+*.pt

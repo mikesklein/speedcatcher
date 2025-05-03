@@ -1,0 +1,7 @@
+{
+    "pixels_per_meter": 173,
+    "speed_limit_kph": 13,
+    "zone_size_m": 5,
+    "box_offset_y": -26,
+    "box_offset_x": 0
+}
