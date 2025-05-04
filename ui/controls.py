@@ -1,5 +1,6 @@
 # yolo_speed_tracker/ui/controls.py
 from tkinter import Scale, Label, HORIZONTAL, IntVar, DoubleVar, StringVar, BooleanVar, Frame, Button, Entry
+from tkinter import BooleanVar, Checkbutton
 
 from utils.config import save_config
 
@@ -8,6 +9,11 @@ def create_controls(root, config):
     controls = {}
     container = Frame(root)
     container.pack(padx=10, pady=10)
+    from tkinter import BooleanVar, Checkbutton
+
+    # Use Calibration Lines Toggle
+    controls['use_calibration_lines'] = BooleanVar(value=True)
+    Checkbutton(container, text="Use Calibration Lines", variable=controls['use_calibration_lines']).pack(pady=(10, 0))
 
     # Helper to bind integer controls with slider and entry
     def bind_int_control(label_text, key, from_, to):

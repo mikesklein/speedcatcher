@@ -16,12 +16,43 @@ DEFAULT_CONFIG = {
 }
 
 def load_config():
+    config = DEFAULT_CONFIG.copy()
+
     if os.path.exists(CONFIG_FILE):
-        with open(CONFIG_FILE, "r") as f:
-            return json.load(f)
-    return DEFAULT_CONFIG.copy()
+        try:
+            with open(CONFIG_FILE, "r") as f:
+                loaded = json.load(f)
+                config.update({k: loaded[k] for k in loaded if k in config})
+        except Exception as e:
+            print(f"⚠️ Failed to load config: {e}. Using defaults.")
+
+    return config
 
 def save_config(controls):
-    data = {key: round(var.get(), 2) for key, var in controls.items()}
+    keys_to_save = {
+        "pixels_per_meter",
+        "speed_limit_kph",
+        "box_offset_y",
+        "box_offset_x",
+        "calib_line1_x",
+        "calib_line2_x",
+        "real_world_distance_m",
+        "capture_zone_offset_m",
+        "capture_zone_height_m"
+    }
+
+    data = {}
+
+    for key in keys_to_save:
+        var = controls.get(key)
+        if var is None:
+            continue
+        try:
+            value = var.get()
+            if isinstance(value, (int, float)):
+                data[key] = round(value, 2)
+        except Exception as e:
+            print(f"⚠️ Skipped key {key}: {e}")
+
     with open(CONFIG_FILE, "w") as f:
         json.dump(data, f, indent=4)
