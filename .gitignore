@@ -1,9 +1,10 @@
 # Ignore screenshots directory
 screenshots/
-
+captures/
 # Ignore all CSV files
 *.csv
 
+*.avi
 # Ignore all video files with .mov extension
 *.mov
 
