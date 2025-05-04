@@ -15,6 +15,9 @@ from ui.controls import create_controls, update_control_values
 MODEL_PATH = "yolov8n.pt"
 ALLOWED_CLASSES = [2, 3, 5, 7]  # person, bicycle, car, motorcycle, bus, truck
 
+def get_video_files(directory, extensions=(".avi", ".mov", ".mp4")):
+    return [os.path.join(directory, f) for f in sorted(os.listdir(directory)) if f.endswith(extensions)]
+
 def initialize_tracker():
     return {
         "object_history": {},
@@ -90,7 +93,10 @@ def main_loop(cap, model, controls, tracker_data, class_names, root, is_live):
         if frame is None:
             if skip:
                 continue
-            break
+            if not is_live:
+                break  # Exit after video ends if it's a file
+            else:
+                continue  # Keep looping for live webcam
 
         current_time = time.time()
         if is_live:
@@ -201,28 +207,40 @@ def main_loop(cap, model, controls, tracker_data, class_names, root, is_live):
                     data['screenshot_finalized'][obj_id] = True
 
         cv2.imshow("YOLOv8 Speed Tracker", frame)
-        if cv2.waitKey(1) == 27:
+        if cv2.waitKey(10) & 0xFF == 27:
             break
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="YOLOv8 Speed Tracker")
-    parser.add_argument("--video", type=str, help="Path to a video file. If not provided, webcam will be used.")
+    parser.add_argument("--video", type=str, help="Path to a video file. If not provided, webcam or batch mode will be used.")
+    parser.add_argument("--batch", action="store_true", help="Process all files in the captures directory.")
     args = parser.parse_args()
 
     setup_environment()
     config = load_config()
-    is_live = args.video is None
     root = Tk()
     root.title("Live Calibration")
     controls = create_controls(root, config)
-
     model = YOLO(MODEL_PATH)
-    cap = initialize_video_source(args.video)
-    tracker_data = initialize_tracker()
     class_names = model.model.names
 
     try:
-        main_loop(cap, model, controls, tracker_data, class_names, root, is_live)
+        if args.batch:
+            try:
+                video_files = get_video_files("captures")
+                for video_path in video_files:
+                    print(f"🎞️ Processing: {video_path}")
+                    cap = initialize_video_source(video_path)
+                    tracker_data = initialize_tracker()
+                    main_loop(cap, model, controls, tracker_data, class_names, root, is_live=False)
+                    cap.release()
+            except KeyboardInterrupt:
+                print("⏹️ Batch processing interrupted by user.")
+        else:
+            is_live = args.video is None
+            cap = initialize_video_source(args.video)
+            tracker_data = initialize_tracker()
+            main_loop(cap, model, controls, tracker_data, class_names, root, is_live)
     except Exception as e:
         print("🔥 Error in main loop:", e)
         traceback.print_exc()
