@@ -1,11 +1,11 @@
 {
-    "speed_limit_kph": 20,
-    "box_offset_y": 0,
-    "capture_zone_offset_m": -1.37,
-    "capture_zone_height_m": 2.14,
+    "box_offset_x": 0,
     "pixels_per_meter": 83,
+    "capture_zone_height_m": 2.14,
     "calib_line1_x": 771.76,
-    "real_world_distance_m": 4.27,
+    "speed_limit_kph": 20,
     "calib_line2_x": 1129.41,
-    "box_offset_x": 0
+    "capture_zone_offset_m": -1.37,
+    "real_world_distance_m": 4.27,
+    "box_offset_y": 0
 }

@@ -13,7 +13,7 @@ from utils.environment import setup_environment, SCREENSHOT_DIR, CSV_PATH
 from ui.controls import create_controls, update_control_values
 
 MODEL_PATH = "yolov8n.pt"
-ALLOWED_CLASSES = [2, 3, 5, 7]  # person, bicycle, car, motorcycle, bus, truck
+ALLOWED_CLASSES = [0, 1, 2, 3, 5, 7]  # person, bicycle, car, motorcycle, bus, truck
 
 def get_video_files(directory, extensions=(".avi", ".mov", ".mp4")):
     return [os.path.join(directory, f) for f in sorted(os.listdir(directory)) if f.endswith(extensions)]
@@ -194,6 +194,13 @@ def main_loop(cap, model, controls, tracker_data, class_names, root, is_live):
                 label = f"{class_name} ID {obj_id} | {speed_kph:.1f} km/h"
                 cv2.putText(frame, label, (x1, y1 - 10),
                             cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+
+                # Log people even if not speeding
+                if cls_id == 0 and not data['screenshot_taken'][obj_id]:
+                    path, timestamp = save_screenshot(frame, box, obj_id, class_name, speed_kph)
+                    log_to_csv(timestamp, obj_id, class_name, speed_kph, path, direction)
+                    data['screenshot_taken'][obj_id] = True
+                    data['screenshot_finalized'][obj_id] = True
 
                 if (direction == "right"
                         and speed_kph > speed_limit_kph

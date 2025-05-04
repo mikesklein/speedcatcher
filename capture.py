@@ -12,7 +12,7 @@ FRAME_HEIGHT = 1080
 FPS = 30
 CHUNK_DURATION_MINUTES = 1
 CHUNK_DURATION_SECONDS = CHUNK_DURATION_MINUTES * 60
-TOTAL_DURATION_SECONDS = 60 * 60  # Run for 1 hour
+TOTAL_DURATION_SECONDS = 60 #60 * 60  # Run for 1 hour
 OUTPUT_DIR = "captures"
 
 # --- Setup ---
@@ -40,22 +40,27 @@ def new_writer(chunk_index):
 
 def convert_avi_to_mov_and_delete(avi_path):
     base, _ = os.path.splitext(avi_path)
-    mov_path = base + ".mov"
+    temp_mov_path = base + ".mov.inprogress"
+    final_mov_path = base + ".mov"
+
     cmd = [
         "ffmpeg",
         "-y",
         "-i", avi_path,
         "-vcodec", "prores_ks",
         "-pix_fmt", "yuv422p10le",
-        mov_path
+        temp_mov_path
     ]
-    print(f"🎞️ Converting {avi_path} → {mov_path}")
+    print(f"🎞️ Converting {avi_path} → {final_mov_path}")
     try:
         subprocess.run(cmd, check=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+        os.rename(temp_mov_path, final_mov_path)
         os.remove(avi_path)
         print(f"🗑️ Deleted original: {avi_path}")
     except subprocess.CalledProcessError:
         print(f"❌ Failed to convert {avi_path}")
+        if os.path.exists(temp_mov_path):
+            os.remove(temp_mov_path)
 
 # --- Start First Chunk ---
 out, current_avi_path = new_writer(chunk_index)
@@ -93,12 +98,12 @@ try:
         if time.time() - start_time >= CHUNK_DURATION_SECONDS:
             out.release()
 
-            # Background conversion
-            threading.Thread(
-                target=convert_avi_to_mov_and_delete,
-                args=(current_avi_path,),
-                daemon=True
-            ).start()
+            # # Background conversion
+            # threading.Thread(
+            #     target=convert_avi_to_mov_and_delete,
+            #     args=(current_avi_path,),
+            #     daemon=True
+            # ).start()
 
             chunk_index += 1
             out, current_avi_path = new_writer(chunk_index)
