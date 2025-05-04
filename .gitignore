@@ -1,6 +1,7 @@
 # Ignore screenshots directory
 screenshots/
 captures/
+video_archive/
 # Ignore all CSV files
 *.csv
 

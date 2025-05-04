@@ -1,4 +1,4 @@
-# yolo_speed_tracker/main.py
+# yolo_speed_tracker/processor.py
 import cv2
 import time
 import argparse

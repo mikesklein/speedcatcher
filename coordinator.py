@@ -9,7 +9,7 @@ CAPTURE_DIR = Path("captures")
 PROCESSED_LOG = Path("processed_files.txt")
 LOCK_EXT = ".lock"
 CAPTURE_SCRIPT = "capture.py"
-PROCESS_SCRIPT = "main.py"
+PROCESS_SCRIPT = "realtime.py"
 MAX_WORKERS = 2
 CHECK_INTERVAL = 5  # seconds
 

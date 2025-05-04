@@ -6,13 +6,13 @@ import subprocess
 import threading
 
 # --- Configuration ---
-CAMERA_INDEX = 0
+CAMERA_INDEX = 2
 FRAME_WIDTH = 1920
 FRAME_HEIGHT = 1080
 FPS = 30
-CHUNK_DURATION_MINUTES = 1
+CHUNK_DURATION_MINUTES = 10
 CHUNK_DURATION_SECONDS = CHUNK_DURATION_MINUTES * 60
-TOTAL_DURATION_SECONDS = 60 #60 * 60  # Run for 1 hour
+TOTAL_DURATION_SECONDS = 60 * 60  # Run for 1 hour
 OUTPUT_DIR = "captures"
 
 # --- Setup ---
