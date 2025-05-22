@@ -6,6 +6,9 @@
 # import cv2
 # from .environment import SCREENSHOT_DIR, CSV_PATH
 #
+# Add a constant for jitter threshold, can be configured later if needed
+JITTER_THRESHOLD_PIXELS = 3
+
 # def initialize_tracker():
 #     return {
 #         "object_history": {},
